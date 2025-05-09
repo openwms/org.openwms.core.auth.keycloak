@@ -35,7 +35,20 @@ Provide the basic details for the external http provider in the details form:
 | Cache policy | How frequently Keycloak shall call the provider implementation to clear the user cache |
 
 ## External HTTP Authentication API
-Keycloak calls the configured service to authenticate unknown users. The API implementation must have the two following endpoints.
+Keycloak calls the configured service to authenticate unknown users. The API implementation must have the below listed endpoints. All
+defined data exchange models are provided as a `client-jar` and can be easily imported into a service implementation with the following
+Maven dependency:
+
+```xml
+<dependency>
+    <groupId>org.openwms</groupId>
+    <artifactId>org.openwms.core.auth.keycloak</artifactId>
+    <version>${core.auth.keycloak.version}</version>
+    <classifier>client</classifier>
+</dependency>
+```
+
+With this dependency inclusion the service implementation has at least the defined data types for request and response formats. 
 
 **Find User Endpoint**
 
