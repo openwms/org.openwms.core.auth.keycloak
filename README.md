@@ -91,5 +91,9 @@ and doesn't match, the server must respond with a http status code `400-BAD_REQU
 **Note**: Take into account, that the raw password is sent between Keycloak and the external service. So at least http over TLS must be used
 between both parties.
 
+# Theming
+Keycloak can be themed externally by injecting CSS/JS and FTL files. On the other hand there is [Keycloakify](https://www.keycloakify.dev)
+as a powerful solution for this.
+
 [1]: src/site/resources/images/add-providers.png
 [2]: src/site/resources/images/provider-details.png
