@@ -88,7 +88,7 @@ inputted password.
 If the username/password combination is correct, the server responds with `200-OK` and an empty response body. If the combination is invalid
 and doesn't match, the server must respond with a http status code `400-BAD_REQUEST`.
 
-*Note* Take into account, that the raw password is sent between Keycloak and the external service. So at least a http over TLS must be used
+**Note**: Take into account, that the raw password is sent between Keycloak and the external service. So at least a http over TLS must be used
 between both parties.
 
 [1]: src/site/resources/images/add-providers.png
