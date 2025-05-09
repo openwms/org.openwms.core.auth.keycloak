@@ -2,6 +2,8 @@
 This extension is a `UserStorageProvider` implementation that can be integrated into [Keycloak](https://www.keycloak.org). Keycloak will
 then recognize it as part of the user authentication procedure to authenticate against a remote http service.
 
+![Arch][3]
+
 ## Usage in Keycloak
 After building the project, the jar file must be copied to Keycloak's `providers` directory. In case of the Keycloak Docker image this is at
 `/opt/keycloak/providers`. A simple Dockerfile that adopts the original Keycloak Dockerfile looks like:
@@ -110,3 +112,4 @@ as a powerful solution for this.
 
 [1]: src/site/resources/images/add-providers.png
 [2]: src/site/resources/images/provider-details.png
+[3]: src/site/resources/images/arch.jpg
