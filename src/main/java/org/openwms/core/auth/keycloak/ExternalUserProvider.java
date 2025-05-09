@@ -16,9 +16,6 @@
 package org.openwms.core.auth.keycloak;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openwms.core.auth.keycloak.api.FindUserRequest;
-import org.openwms.core.auth.keycloak.api.FindUserResponse;
-import org.openwms.core.auth.keycloak.api.ValidateRequest;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
@@ -35,6 +32,9 @@ import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
 import org.keycloak.storage.adapter.AbstractUserAdapter;
 import org.keycloak.storage.user.UserLookupProvider;
+import org.openwms.core.auth.keycloak.api.FindUserRequest;
+import org.openwms.core.auth.keycloak.api.FindUserResponse;
+import org.openwms.core.auth.keycloak.api.ValidateRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,9 +44,15 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A ExternalUserProvider.
+ * A ExternalUserProvider is the implementation of the required Keycloak Provider interfaces in order to authenticate a user. It builds up
+ * an internal cache for users, that should be purged continuously (Keycloak Cache policy). Two {@link ConcurrentHashMap}s are used and
+ * synchronized for the cache. The user could log in with an email address or by username, hence not all user information is always
+ * available.
  *
  * @author Heiko Scherrer
+ * @see org.keycloak.storage.UserStorageProvider
+ * @see org.keycloak.storage.user.UserLookupProvider
+ * @see org.keycloak.credential.CredentialInputValidator
  */
 public class ExternalUserProvider implements UserStorageProvider, UserLookupProvider, CredentialInputValidator {
 
@@ -61,6 +67,9 @@ public class ExternalUserProvider implements UserStorageProvider, UserLookupProv
     private final Map<CombinedUserKey, UserModel> usersMap = new ConcurrentHashMap<>();
     private final Map<String, UserModel> usersMapByEmail = new ConcurrentHashMap<>();
 
+    /**
+     * {@inheritDoc}
+     */
     public ExternalUserProvider(KeycloakSession keycloakSession, ComponentModel componentModel) {
         this.keycloakSession = keycloakSession;
         this.model = componentModel;
@@ -109,7 +118,7 @@ public class ExternalUserProvider implements UserStorageProvider, UserLookupProv
         }
         final var userOpt = resolveByEmail(realm, email);
         if (userOpt.isPresent()) {
-            LOGGER.info("Found user in external system [{}]", userOpt.get());
+            LOGGER.info("Found user by email in external system [{}]", userOpt.get());
             usersMapByEmail.put(email, userOpt.get());
             usersMap.computeIfAbsent(new CombinedUserKey(userOpt.get().getUsername(), realm.getId()), k -> userOpt.get());
             return userOpt.get();
@@ -125,7 +134,7 @@ public class ExternalUserProvider implements UserStorageProvider, UserLookupProv
         }
         final var userOpt = resolveByUsername(realm, username);
         if (userOpt.isPresent()) {
-            LOGGER.info("Found user in external system [{}]", userOpt.get());
+            LOGGER.info("Found user by username in external system [{}]", userOpt.get());
             usersMap.put(key, userOpt.get());
             if (userOpt.get().getEmail() != null) {
                 usersMapByEmail.put(userOpt.get().getEmail(), userOpt.get());
