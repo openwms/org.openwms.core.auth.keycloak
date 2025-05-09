@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openwms</groupId>
+        <artifactId>org.openwms.parent</artifactId>
+        <version>27.2</version>
+        <relativePath/>
+    </parent>
+    <artifactId>org.openwms.core.auth.keycloak</artifactId>
+    <version>1.1.0-SNAPSHOT</version>
+    <name>OpenWMS.org CORE: Keycloak User Authentication Extension</name>
+    <description>An extension to integrate into Keycloak and to allow to authenticate and load external users over an HTTP interface</description>
+    <url>https://openwms.github.io/${project.artifactId}/index.html</url>
+
+    <developers>
+        <developer>
+            <id>scherrer</id>
+            <name>Heiko Scherrer</name>
+            <email>scherrer@openwms.org</email>
+            <url>https://openwms.github.io/</url>
+            <organization>Interface21.io</organization>
+            <organizationUrl>https://www.interface21.io</organizationUrl>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Project Lead</role>
+                <role>Architect</role>
+                <role>Developer</role>
+                <role>Deployer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <properties>
+        <keycloak-model-storage.version>26.1.4</keycloak-model-storage.version>
+    </properties>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>summary</report>
+                            <report>team</report>
+                            <report>issue-management</report>
+                            <report>ci-management</report>
+                            <report>scm</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <build>
+        <finalName>external-http-auth</finalName>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.keycloak</groupId>
+                <artifactId>keycloak-model-storage</artifactId>
+                <version>${keycloak-model-storage.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-model-storage</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
