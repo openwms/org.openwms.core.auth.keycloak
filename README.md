@@ -1,4 +1,4 @@
-# OpenWMS.org User Authentication Extension for Keycloak
+# OpenWMS.org HTTP User Authentication Extension for Keycloak
 This extension is a `UserStorageProvider` implementation that can be integrated into [Keycloak](https://www.keycloak.org). Keycloak will
 then recognize it as part of the user authentication procedure to authenticate against a remote http service.
 
