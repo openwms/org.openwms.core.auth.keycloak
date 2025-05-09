@@ -1,10 +1,10 @@
 # OpenWMS.org User Authentication Extension for Keycloak
-This is extension is a `UserStorageProvider` implementation that can be integrated into [Keycloak](https://www.keycloak.org). Keycloak will
-then integrate it into the user authentication procedure to authenticate against a remote http service.
+This extension is a `UserStorageProvider` implementation that can be integrated into [Keycloak](https://www.keycloak.org). Keycloak will
+then recognize it as part of the user authentication procedure to authenticate against a remote http service.
 
 ## Usage in Keycloak
-The jar file must be copied to Keycloaks `providers` directory. In case of the Keycloak Docker image this is at `/opt/keycloak/providers`.
-A simple Dockerfile that adopts the original Keycloak Dockerfile looks like:
+After building the project, the jar file must be copied to Keycloak's `providers` directory. In case of the Keycloak Docker image this is at
+`/opt/keycloak/providers`. A simple Dockerfile that adopts the original Keycloak Dockerfile looks like:
 
 ```dockerfile
 FROM quay.io/keycloak/keycloak:26.1.4 AS builder
@@ -17,10 +17,13 @@ COPY --from=builder --chown=keycloak:root /opt/keycloak/ /opt/keycloak/
 CMD ["start-dev"]
 ```
 
-After the customized Keycloak image has been built and started, the `External-http` provider should be selectable and can now be created: 
+After the customized Keycloak image has been built and started, the `External-http` provider shows up in the admin console under the menu
+`User federation` and can be selected: 
+
 ![Add Providers][1]
 
 Provide the basic details for the external http provider in the details form:
+
 ![Provider Details][2]
 
 | Component | Description                                                                      |
@@ -32,14 +35,14 @@ Provide the basic details for the external http provider in the details form:
 | Cache policy | How frequently Keycloak shall call the provider implementation to clear the user cache |
 
 ## External HTTP Authentication API
-Keycloak calls the configured service to authenticate unknown user. This service must have the two following endpoints.
+Keycloak calls the configured service to authenticate unknown users. The API implementation must have the two following endpoints.
 
 **Find User Endpoint**
 
 `HTTP POST {Rest Schema}://{Service hostname}:{Service port}/auth/{tenantId}/users`
 
 whereas `tenantId` must not be null and is the Keycloak realm id. The server must accept a JSON request body of the following structure.
-Keycloak can either send the `username` or the `email` to authenticate, this depends on the users input.
+Keycloak can either send the `username` or the `email` to authenticate, this depends on the user input.
 
 ```json
 {
@@ -48,8 +51,8 @@ Keycloak can either send the `username` or the `email` to authenticate, this dep
 }
 ```
 
-If the server can find the user it responds with a `200 OK` and sends back the JSON representation of the mandatory user attributes in the
-response body:
+If the server can find the user it must respond with a `200-OK` and send back the JSON representation of the mandatory user attributes in
+the response body:
 
 ```json
 {
@@ -67,8 +70,8 @@ If the user does not exist on server side, the response must be a `404-NOT_FOUND
 
 **Validate User Endpoint**
 
-As soon as the user has been found, Keycloak calls the Validate endpoint with the username and the entered password in order to validate 
-both are correct in the external service:
+As soon as the user has been found, Keycloak calls this endpoint with the username and the entered password in order to validate both are
+correct:
 
 `HTTP POST {Rest Schema}://{Service hostname}:{Service port}/auth/{tenantId}/users/validate`
 
@@ -82,8 +85,11 @@ inputted password.
 }
 ```
 
-If the username/password combination is correct, the server responds with `200-OK` and an emtpy response body. If the combination is invalid
-and doesn't match the server must respond with a http status code `400-BAD_REQUEST`.
+If the username/password combination is correct, the server responds with `200-OK` and an empty response body. If the combination is invalid
+and doesn't match, the server must respond with a http status code `400-BAD_REQUEST`.
+
+*Note* Take into account, that the raw password is sent between Keycloak and the external service. So at least a http over TLS must be used
+between both parties.
 
 [1]: src/site/resources/images/add-providers.png
 [2]: src/site/resources/images/provider-details.png
